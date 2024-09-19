@@ -1,0 +1,37 @@
+name: napari-cryofibsem-imgproc
+display_name: Cryo-FIB/SEM Image Stacks Post-Processing
+# use 'hidden' to remove plugin from napari hub search results
+visibility: public
+# see https://napari.org/stable/plugins/manifest.html for valid categories
+categories: ["Annotation", "Segmentation", "Acquisition"]
+contributions:
+  commands:
+    - id: napari-cryofibsem-imgproc.make_sample_data
+      python_name: napari_cryofibsem_imgproc._sample_data:make_sample_data
+      title: Load sample data from Cryo-FIB/SEM Image Stacks Post-Processing
+    - id: napari-cryofibsem-imgproc.make_container_widget
+      python_name: napari_cryofibsem_imgproc:ImageThreshold
+      title: Make threshold Container widget
+    - id: napari-cryofibsem-imgproc.make_magic_widget
+      python_name: napari_cryofibsem_imgproc:threshold_magic_widget
+      title: Make threshold magic widget
+    - id: napari-cryofibsem-imgproc.make_function_widget
+      python_name: napari_cryofibsem_imgproc:threshold_autogenerate_widget
+      title: Make threshold function widget
+    - id: napari-cryofibsem-imgproc.make_qwidget
+      python_name: napari_cryofibsem_imgproc:ExampleQWidget
+      title: Make example QWidget
+  sample_data:
+    - command: napari-cryofibsem-imgproc.make_sample_data
+      display_name: Cryo-FIB/SEM Image Stacks Post-Processing
+      key: unique_id.1
+  widgets:
+    - command: napari-cryofibsem-imgproc.make_container_widget
+      display_name: Container Threshold
+    - command: napari-cryofibsem-imgproc.make_magic_widget
+      display_name: Magic Threshold
+    - command: napari-cryofibsem-imgproc.make_function_widget
+      autogenerate: true
+      display_name: Autogenerate Threshold
+    - command: napari-cryofibsem-imgproc.make_qwidget
+      display_name: Example QWidget
