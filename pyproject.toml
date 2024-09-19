@@ -24,12 +24,11 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "numpy",
+    "numpy==1.26.4",
     "magicgui",
-    "qtpy",
-    "scikit-image",
-    "PyWavelets", 
-    "opencv-python"
+    "scikit-image==0.24.0",
+    "PyWavelets==1.6.0", 
+    "opencv-python==4.10.0.84"
 ]
 
 [project.optional-dependencies]
