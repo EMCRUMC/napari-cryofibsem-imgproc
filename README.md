@@ -36,7 +36,7 @@ To install latest development version :
 ## Usage 
 Cryo-FIB/SEM Image Processing offers 5 functions: curtaining artifact removal, charging artifact removal, noise reduction, contrast enhancement, and stack brightness correction. Using the widgets, the user can choose the input image or stack, set the function parameters, and call the function. These functions can be used in sequence with each other or individually, depending on the image processing requirements. 
 
-![widget.png](docs%2Fimages%2Fwidget.png)
+![widget.png](widget.png)
 
 ## Contributing
 
