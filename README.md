@@ -1,6 +1,6 @@
 # napari-cryofibsem-imgproc
 
-[![License Apache Software License 2.0](https://img.shields.io/pypi/l/napari-cryofibsem-imgproc.svg?color=green)](https://github.com/EMCRUMC/napari-cryofibsem-imgproc/main/LICENSE)
+[![License Apache Software License 2.0](https://img.shields.io/pypi/l/napari-cryofibsem-imgproc.svg?color=green)](https://github.com/EMCRUMC/napari-cryofibsem-imgproc/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-cryofibsem-imgproc.svg?color=green)](https://pypi.org/project/napari-cryofibsem-imgproc)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-cryofibsem-imgproc.svg?color=green)](https://python.org)
 [![tests](https://github.com/EMCRUMC/napari-cryofibsem-imgproc/workflows/tests/badge.svg)](https://github.com/EMCRUMC/napari-cryofibsem-imgproc/actions)
