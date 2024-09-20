@@ -9,19 +9,19 @@ contributions:
     - id: napari-cryofibsem-imgproc.make_sample_data
       python_name: napari_cryofibsem_imgproc._sample_data:make_sample_data
       title: Load sample data from Cryo-FIB/SEM Image Stacks Post-Processing
-    - id: napari-cryofibsem-imgpro.make_decurtain_widget
+    - id: napari-cryofibsem-imgproc.make_decurtain_widget
       python_name: napari_cryofibsem_imgpro:decurtain
       title: Make decurtain widget
-    - id: napari-cryofibsem-imgpro.make_decharge_widget
+    - id: napari-cryofibsem-imgproc.make_decharge_widget
       python_name: napari_cryofibsem_imgpro:decharge
       title: Make decharge widget
-    - id: napari-cryofibsem-imgpro.make_denoise_widget
+    - id: napari-cryofibsem-imgproc.make_denoise_widget
       python_name: napari_cryofibsem_imgpro:denoise
       title: Make denoise widget
-    - id: napari-cryofibsem-imgpro.make_contrast_widget
+    - id: napari-cryofibsem-imgproc.make_contrast_widget
       python_name: napari_cryofibsem_imgpro:contrast
       title: Make contrast widget
-    - id: napari-cryofibsem-imgpro.make_brightness_widget
+    - id: napari-cryofibsem-imgproc.make_brightness_widget
       python_name: napari_cryofibsem_imgpro:brightness
       title: Make brightness widget
   sample_data:
@@ -29,13 +29,13 @@ contributions:
       display_name: Cryo-FIB/SEM Image Stacks Post-Processing
       key: unique_id.1
   widgets:
-    - command: napari-cryofibsem-imgpro.make_decurtain_widget
+    - command: napari-cryofibsem-imgproc.make_decurtain_widget
       display_name: Decurtaining
-    - command: napari-cryofibsem-imgpro.make_decharge_widget
+    - command: napari-cryofibsem-imgproc.make_decharge_widget
       display_name: Decharging
-    - command: napari-cryofibsem-imgpro.make_denoise_widget
+    - command: napari-cryofibsem-imgproc.make_denoise_widget
       display_name: Denoising
-    - command: napari-cryofibsem-imgpro.make_contrast_widget
+    - command: napari-cryofibsem-imgproc.make_contrast_widget
       display_name: Enhancing Contrast
-    - command: napari-cryofibsem-imgpro.make_brightness_widget
+    - command: napari-cryofibsem-imgproc.make_brightness_widget
       display_name: Correcting Brightness
