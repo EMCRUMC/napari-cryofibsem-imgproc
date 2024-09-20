@@ -10,19 +10,19 @@ contributions:
       python_name: napari_cryofibsem_imgproc._sample_data:make_sample_data
       title: Load sample data from Cryo-FIB/SEM Image Stacks Post-Processing
     - id: napari-cryofibsem-imgproc.make_decurtain_widget
-      python_name: napari_cryofibsem_imgpro:decurtain
+      python_name: napari_cryofibsem_imgproc:decurtain
       title: Make decurtain widget
     - id: napari-cryofibsem-imgproc.make_decharge_widget
-      python_name: napari_cryofibsem_imgpro:decharge
+      python_name: napari_cryofibsem_imgproc:decharge
       title: Make decharge widget
     - id: napari-cryofibsem-imgproc.make_denoise_widget
-      python_name: napari_cryofibsem_imgpro:denoise
+      python_name: napari_cryofibsem_imgproc:denoise
       title: Make denoise widget
     - id: napari-cryofibsem-imgproc.make_contrast_widget
-      python_name: napari_cryofibsem_imgpro:contrast
+      python_name: napari_cryofibsem_imgproc:contrast
       title: Make contrast widget
     - id: napari-cryofibsem-imgproc.make_brightness_widget
-      python_name: napari_cryofibsem_imgpro:brightness
+      python_name: napari_cryofibsem_imgproc:brightness
       title: Make brightness widget
   sample_data:
     - command: napari-cryofibsem-imgproc.make_sample_data
