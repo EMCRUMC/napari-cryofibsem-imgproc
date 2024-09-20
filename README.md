@@ -25,7 +25,7 @@ https://napari.org/stable/plugins/index.html
 
 It is recommended to create a fresh [conda] environment with Python 3.12 and napari:
 
-    conda create -n imgpro-env -c conda-forge python=3.12.0 napari pyqt
+    conda create -n imgproc-env -c conda-forge python=3.12.0 napari pyqt
 
 You can install `napari-cryofibsem-imgproc` via [pip]:
 
