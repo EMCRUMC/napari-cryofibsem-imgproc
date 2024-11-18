@@ -9,6 +9,7 @@ from napari_plugin_engine import napari_hook_implementation
 
 def process_slice(slice_data, dec_num, sigma, wname):
     slice_data_dtype = slice_data.dtype
+    slice_data_shape = slice_data.shape
 
     # Decomposes image into details
     Ch, Cv, Cd = [], [], []
@@ -34,9 +35,12 @@ def process_slice(slice_data, dec_num, sigma, wname):
     for ii in range(dec_num - 1, -1, -1):
         img_ori_recon = img_ori_recon[:Ch[ii].shape[0], :Ch[ii].shape[1]]
         img_ori_recon = pywt.idwt2((img_ori_recon, (Ch[ii], Cv[ii], Cd[ii])), wname)
+    
+    # Crops back to original size
+    img_ori_crop = img_ori_recon[:slice_data_shape[0], :slice_data_shape[1]]
 
     # Converts complex128 into float64
-    img_ori_float = np.abs(img_ori_recon).astype(np.float64)
+    img_ori_float = np.abs(img_ori_crop).astype(np.float64)
 
     # Converts and normalizes range to original 8 or 16 bit unsigned integers
     processed_slice_uint = None
