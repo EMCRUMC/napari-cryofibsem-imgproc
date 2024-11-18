@@ -1,4 +1,4 @@
-# This workflows will upload a Python Package using Twine when a release is created
+# This workflow will upload a Python Package using Twine when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
 name: Tests 🧪
@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        platform: [ubuntu-latest, windows-latest]
+        platform: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.10", "3.11", "3.12"]
 
     steps:
@@ -34,12 +34,16 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Add a step to install xvfb on Ubuntu
+      # Install xvfb on Linux
       - name: Install xvfb on Linux
         if: matrix.platform == 'ubuntu-latest'
         run: sudo apt-get install -y xvfb
 
-      # Strategy borrowed from Vispy for installing OpenGL libs on Windows
+      # Install Qt libraries for macOS and Linux
+      - uses: tlambert03/setup-qt-libs@v1
+        if: matrix.platform != 'windows-latest'
+
+      # Install OpenGL on Windows
       - name: Install Windows OpenGL
         if: matrix.platform == 'windows-latest'
         run: |
@@ -60,6 +64,7 @@ jobs:
         env:
           PLATFORM: ${{ matrix.platform }}
 
+      # Upload coverage report
       - name: Coverage
         uses: codecov/codecov-action@v3
 
