@@ -1,6 +1,9 @@
 # This workflows will upload a Python Package using Twine when a release is created
 # For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
 
+# This workflows will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
 name: Tests 🧪
 
 on:
@@ -23,8 +26,8 @@ jobs:
     timeout-minutes: 30
     strategy:
       matrix:
-        platform: [windows-latest]
-        python-version: ["3.10", "3.11", "3.12"]
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.12"]
 
     steps:
       - uses: actions/checkout@v4
@@ -91,4 +94,3 @@ jobs:
           git tag
           python -m build .
           twine upload dist/*
-
