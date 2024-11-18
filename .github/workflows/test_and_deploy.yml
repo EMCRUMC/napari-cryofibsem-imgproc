@@ -68,28 +68,30 @@ jobs:
       - name: Coverage
         uses: codecov/codecov-action@v3
 
-  deploy:
-    needs: [test]
-    runs-on: ubuntu-latest
-    if: contains(github.ref, 'tags')
-    steps:
-      - uses: actions/checkout@v4
+deploy:
+  needs: [test]
+  runs-on: ubuntu-latest
+  if: |
+    contains(github.ref, 'tags') ||
+    github.ref == 'refs/heads/main'
+  steps:
+    - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.x"
 
-      - name: Install build dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -U setuptools setuptools_scm wheel twine build
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -U setuptools setuptools_scm wheel twine build
 
-      - name: Build and publish
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.TWINE_API_KEY }}
-        run: |
-          git tag
-          python -m build .
-          twine upload dist/*
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.TWINE_API_KEY }}
+      run: |
+        git tag
+        python -m build .
+        twine upload dist/*
