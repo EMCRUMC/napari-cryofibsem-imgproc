@@ -33,4 +33,4 @@ jobs:
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       env:
-        PYPI_API_TOKEN: ${{ secrets.TWINE_API_KEY }}  # If not using Trusted Publisher
+        PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}  # If not using Trusted Publisher
