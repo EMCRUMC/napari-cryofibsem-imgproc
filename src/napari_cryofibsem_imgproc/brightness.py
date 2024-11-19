@@ -65,7 +65,7 @@ def brightness(
     stack_data = stack.data
     
     if len(stack_data.shape) != 3:  # Checks if stack is 3D and not just a single image
-        print(f"Number of dimensions in the image: {len(stack_data.shape)}. Please select a 3-dimensional stack")
+        print(f"Number of dimensions in the image: {len(stack_data.shape)}. Please select a 3-dimensional stack.")
         return
         
     is_dask = isinstance(stack_data, da.Array)
