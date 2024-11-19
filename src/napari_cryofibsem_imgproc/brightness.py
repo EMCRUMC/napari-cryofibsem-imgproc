@@ -62,9 +62,8 @@ def brightness(
         print("Please select a stack.")
         return
 
-    if len(stack.shape) > 3:  # Handles single image cases
-        print("Please select a stack, not a single image.")
-        return
+    if len(stack.shape) <= 2:  # Not 3D
+        raise ValueError("Invalid input: Please select a stack (3D array), not a single image (2D array).")
 
     stack_data = stack.data
     is_dask = isinstance(stack_data, da.Array)
