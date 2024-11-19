@@ -1,4 +1,7 @@
-name: CI/CD Workflow
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
+
+name: Tests 🧪
 
 on:
   push:
@@ -11,9 +14,6 @@ on:
     branches:
       - main
       - npe2
-  release:
-    types:
-      - published  # Trigger on new releases
   workflow_dispatch:
 
 jobs:
@@ -71,9 +71,9 @@ jobs:
   deploy:
     needs: [test]
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write  # Required for the OIDC token
-    if: github.event_name == 'release' && github.event.action == 'published'
+    if: |
+      contains(github.ref, 'tags') ||
+      github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
   
@@ -85,30 +85,13 @@ jobs:
       - name: Install build dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -U setuptools setuptools_scm wheel build
+          pip install -U setuptools setuptools_scm wheel twine build
   
-      - name: Build
-        run: python -m build
-  
-      - name: Mint API Token
-        id: mint-token
+      - name: Build and publish
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.TWINE_API_KEY }}
         run: |
-          # Retrieve the ambient OIDC token
-          resp=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=pypi")
-          oidc_token=$(jq -r '.value' <<< "${resp}")
-
-          # Exchange the OIDC token for an API token
-          resp=$(curl -X POST https://pypi.org/_/oidc/mint-token -d "{\"token\": \"${oidc_token}\"}")
-          api_token=$(jq -r '.token' <<< "${resp}")
-
-          # Mask the newly minted API token
-          echo "::add-mask::${api_token}"
-
-          # Output the API token for the next step
-          echo "api-token=${api_token}" >> "${GITHUB_OUTPUT}"
-
-      - name: Publish
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ steps.mint-token.outputs.api-token }}
+          git tag
+          python -m build .
+          twine upload dist/*
