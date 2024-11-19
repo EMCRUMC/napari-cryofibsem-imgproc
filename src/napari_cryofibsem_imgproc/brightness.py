@@ -62,6 +62,10 @@ def brightness(
         print("Please select a stack.")
         return
 
+    if len(stack.shape) > 3:  # Handles single image cases
+        print("Please select a stack, not a single image.")
+        return
+
     stack_data = stack.data
     is_dask = isinstance(stack_data, da.Array)
     datatype = stack_data.dtype
