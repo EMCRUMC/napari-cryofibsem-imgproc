@@ -59,7 +59,7 @@ def brightness(
 
     """
     if stack is None:  # Handles null cases
-        print("Please select a stack.")
+        print("Please select a STACKstack.")
         return
 
     stack_data = stack.data
