@@ -6,6 +6,7 @@ import concurrent.futures
 from magicgui import magic_factory
 from napari_plugin_engine import napari_hook_implementation
 
+#
 
 def process_slice(slice_data, sigma_x, sigma_y):
     # Handles processing for Dask arrays
