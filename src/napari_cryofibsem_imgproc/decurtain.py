@@ -1,124 +1,128 @@
+import napari
 import cv2
 import numpy as np
 import pywt
-from napari.layers import Image
-import concurrent.futures
-from magicgui import magic_factory
-from napari_plugin_engine import napari_hook_implementation
+from qtpy.QtWidgets import QHBoxLayout, QWidget, QSlider, QLabel, QFormLayout, QComboBox
+from qtpy.QtCore import Qt
 
 
-def process_slice(slice_data, dec_num, sigma, wname):
-    slice_data_dtype = slice_data.dtype
-    slice_data_shape = slice_data.shape
+class Decurtain(QWidget):
+    def __init__(self, viewer: "napari.viewer.Viewer"):
+        super().__init__()
+        self.viewer = viewer
+        self.dec_num = 20  # Default decomposition level
+        self.sigma = 20  # Default sigma value
 
-    # Decomposes image into details
-    Ch, Cv, Cd = [], [], []
-    for ii in range(dec_num):
-        slice_data, (ch, cv, cd) = pywt.dwt2(slice_data, wname)
-        Ch.append(ch)
-        Cv.append(cv)
-        Cd.append(cd)
+        # Layout setup
+        layout = QFormLayout()
+        self.setLayout(layout)
 
-    # Applies damping to vertical detail coefficient at each decomposition level
-    for ii in range(dec_num):
-        fCv = np.fft.fftshift(np.fft.fft2(Cv[ii]))
-        my, mx = fCv.shape
+        # First Slider and Label
+        self.slider1 = QSlider(Qt.Horizontal)
+        self.slider1.setSingleStep(1)
+        self.slider1.setMinimum(1)
+        self.slider1.setMaximum(15)
+        self.slider1.setValue(6)
+        # self.slider1.setTickPosition(QSlider.TicksBelow)
+        # self.slider1.setTickInterval(5)
+        self.slider1.valueChanged.connect(self.on_slider1_change)
 
-        damp = 1 - np.exp(-np.square(np.arange(-my // 2, my // 2)) / (2 * sigma ** 2))
-        fCv *= damp[:, np.newaxis]
+        self.label1 = QLabel(f"Decomposition Level: {self.slider1.value()}", self)
+        layout.addRow("Decomposition Level", self.slider1)
+        layout.addRow(self.label1)
 
-        Cv[ii] = np.fft.ifft2(np.fft.ifftshift(fCv))
+        # Second Slider and Label
+        self.slider2 = QSlider(Qt.Horizontal)
+        self.slider2.setSingleStep(1)
+        self.slider2.setMinimum(1)
+        self.slider2.setMaximum(15)
+        self.slider2.setValue(4)
+        # self.slider2.setTickPosition(QSlider.TicksBelow)
+        # self.slider2.setTickInterval(5)
+        self.slider2.valueChanged.connect(self.on_slider2_change)
 
-    img_ori_recon = slice_data
+        self.label2 = QLabel(f"Sigma: {self.slider2.value()}", self)
+        layout.addRow("Sigma", self.slider2)
+        layout.addRow(self.label2)
 
-    # Reconstructs details into image
-    for ii in range(dec_num - 1, -1, -1):
-        img_ori_recon = img_ori_recon[:Ch[ii].shape[0], :Ch[ii].shape[1]]
-        img_ori_recon = pywt.idwt2((img_ori_recon, (Ch[ii], Cv[ii], Cd[ii])), wname)
-    
-    # Crops back to original size
-    img_ori_crop = img_ori_recon[:slice_data_shape[0], :slice_data_shape[1]]
+        # Combo Box
+        self.combobox = QComboBox(self)
+        self.combobox.addItems(["Coiflet 1", "Coiflet 2", "Coiflet 3"])
+        # self.combobox.currentTextChanged.connect(self.update_wavelet_selection)
 
-    # Converts complex128 into float64
-    img_ori_float = np.abs(img_ori_crop).astype(np.float64)
+        layout.addRow("Wavelet", self.combobox)
 
-    # Converts and normalizes range to original 8 or 16 bit unsigned integers
-    processed_slice_uint = None
-    if slice_data_dtype == "uint16":
-        processed_slice_uint = cv2.normalize(img_ori_float, None, alpha=0, beta=65535, norm_type=cv2.NORM_MINMAX,
-                                             dtype=cv2.CV_16U)
-    elif slice_data_dtype == "uint8":
-        processed_slice_uint = cv2.normalize(img_ori_float, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX,
-                                             dtype=cv2.CV_8U)
+    # Handle slider updates
+    def on_slider1_change(self, value):
+        self.label1.setText(f'Decomposition Level Value: {value}')
+        self.on_slider_change(value, "Decomposition Level")
+        self.last_slider = "Decomposition Level"
+        self.dec_num = value
 
-    return processed_slice_uint
+    def on_slider2_change(self, value):
+        self.label2.setText(f'Sigma: {value}')
+        self.on_slider_change(value, "Sigma")
+        self.last_slider = "Sigma"
+        self.sigma = value
 
+    def on_slider_change(self, value, slider_type):
+        print(f"Slider {slider_type} changed to {value}")
+        self.process_slice()
 
-@magic_factory(
-    call_button="Decurtain",
-    image={"label": "Input Image"},
-    dec_num={"label": "Decomposition level"},
-    sigma={"label": "Sigma"},
-    wname={"label": "Wavelet", "choices": ["coif1", "coif3", "coif5"]}
-)
-def decurtain(
-    image: Image, 
-    dec_num: int = 6, 
-    sigma: int = 4,
-    wname: str = "coif5"
-) -> Image:
-    """
-    This widget removes the vertical stripes or the "curtain" artefacts due to FIB milling. 
-    The algorithm is based on the combined wavelet-Fourier (Münch et al. 2009). It utilizes 
-    wavelet decomposition, FFT transform, damping of vertical details, and wavelet reconstruction.
+    # Decurtaining function
+    def process_slice(self):
+        slice_data = self.viewer.layers[0].data
 
-    Parameters
-    ----------
-    Image : "Image"
-        Image to be processed
+        if len(self.viewer.layers) == 1:
+            self.viewer.add_image(self.viewer.layers[0].data, name="copy")
 
-    Decomposition level : int
-        Number of decomposition levels of features in the image
+        slice_data_dtype = slice_data.dtype
+        slice_data_shape = slice_data.shape
 
-    Sigma : int
-        Width of the damping filter for the destriping
-    
-    Returns
-    -------
-        napari Image layer containing the decurtained image
-    """
-    if image is None:  # Handles null cases
-        print("Please select an image layer.")
-        return
+        dec_num = self.dec_num
+        sigma = self.sigma
+        wname = "coif3"
 
-    if len(image.data.shape) > 2: 
-        stack = image.data
-        processed_slices = []
-        slice_order = []  # To keep track of slice order
-        
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future_to_slice = {executor.submit(process_slice, stack[slice_idx], dec_num, sigma, wname): 
-                               slice_idx for slice_idx in range(stack.shape[0])}
-            for future in concurrent.futures.as_completed(future_to_slice):
-                slice_idx = future_to_slice[future]
-                slice_order.append(slice_idx)
-                processed_slices.append(future.result())
-                
-        # Sort processed slices based on original order
-        processed_slices = [x for _, x in sorted(zip(slice_order, processed_slices))]  
-        processed_stack = np.stack(processed_slices)
-        
-    else: 
-        processed_stack = process_slice(image.data, dec_num, sigma, wname)
+        # Decomposes image into details
+        Ch, Cv, Cd = [], [], []
+        for ii in range(dec_num):
+            slice_data, (ch, cv, cd) = pywt.dwt2(slice_data, wname)
+            Ch.append(ch)
+            Cv.append(cv)
+            Cd.append(cd)
 
-    image_name = f"Dcur_dec{dec_num}_sig{sigma}_{wname}"
+        # Applies damping to vertical detail coefficient at each decomposition level
+        for ii in range(dec_num):
+            fCv = np.fft.fftshift(np.fft.fft2(Cv[ii]))
+            my, mx = fCv.shape
 
-    print(f"\nImage or Stack decurtained successfully!\n{image_name} added to Layer List.")
-    
-    # Returns the processed stack with the parameters in the name
-    return Image(processed_stack, name=image_name)
+            damp = 1 - np.exp(-np.square(np.arange(-my // 2, my // 2)) / (2 * sigma ** 2))
+            fCv *= damp[:, np.newaxis]
 
+            Cv[ii] = np.fft.ifft2(np.fft.ifftshift(fCv))
 
-@napari_hook_implementation
-def napari_experimental_provide_dock_widget():
-    return decurtain
+        img_ori_recon = slice_data
+        print(img_ori_recon.shape)
+
+        # Reconstructs details into image
+        for ii in range(dec_num - 1, -1, -1):
+            img_ori_recon = img_ori_recon[:Ch[ii].shape[0], :Ch[ii].shape[1]]
+            img_ori_recon = pywt.idwt2((img_ori_recon, (Ch[ii], Cv[ii], Cd[ii])), wname)
+
+        # Crops back to original size
+        img_ori_crop = img_ori_recon[:slice_data_shape[0], :slice_data_shape[1]]
+
+        # Converts complex128 into float64
+        img_ori_float = np.abs(img_ori_crop).astype(np.float64)
+
+        # Converts and normalizes range to original 8 or 16 bit unsigned integers
+        processed_slice_uint = None
+        if slice_data_dtype == "uint16":
+            processed_slice_uint = cv2.normalize(img_ori_float, None, alpha=0, beta=65535, norm_type=cv2.NORM_MINMAX,
+                                                 dtype=cv2.CV_16U)
+        elif slice_data_dtype == "uint8":
+            processed_slice_uint = cv2.normalize(img_ori_float, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX,
+                                                 dtype=cv2.CV_8U)
+        print(slice_data_dtype)
+
+        self.viewer.layers["copy"].data = processed_slice_uint

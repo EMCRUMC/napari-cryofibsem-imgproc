@@ -4,8 +4,9 @@ from ._widget import ExampleQWidget, ImageThreshold, threshold_autogenerate_widg
 from .brightness import brightness
 from .contrast import contrast
 from .decharge import decharge
-from .decurtain import decurtain
+from .decurtain import Decurtain
 from .denoise import denoise
+from .parent import Parent
 
 __all__ = (
     "make_sample_data",
@@ -16,6 +17,7 @@ __all__ = (
     "brightness"
     "contrast",
     "decharge",
-    "decurtain",
+    "Decurtain",
     "denoise",
+    "Parent"
 )
