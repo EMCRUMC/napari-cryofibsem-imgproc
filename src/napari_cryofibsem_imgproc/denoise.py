@@ -64,13 +64,12 @@ def process_slice(slice_data, iteration, b):
     call_button="Denoise",
     image={"label": "Input Image"},
     iteration={"label": "Iteration"},
-    b={"label": "Gradient Threshold",
-       "choices": ["0.01", "0.02", "0.03", "0.04", "0.05", "0.06", "0.07", "0.08", "0.09", "0.10"]}
+    b={"label": "Gradient Threshold"}
 )
 def denoise(
         image: Image,
         iteration: int = 1,
-        b: str = "0.05"
+        b: float = 0.05
 ) -> Image:
     """
     This widget denoises the image based on the anisotropic diffusion algorithm
