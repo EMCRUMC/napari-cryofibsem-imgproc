@@ -65,7 +65,7 @@ def decurtain(
     image: Image, 
     dec_num: int = 6, 
     sigma: int = 4,
-    wname: str = "coif5"
+    wname: str = "coif3"
 ) -> Image:
     """
     This widget removes the vertical stripes or the "curtain" artefacts due to FIB milling. 
