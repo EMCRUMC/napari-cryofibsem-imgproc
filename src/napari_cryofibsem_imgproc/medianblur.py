@@ -40,8 +40,6 @@ def medianblur(
         print("Please select an image layer.")
         return
 
-    clip_limit_float = float(clip_limit)  # Converts string of clip limit value into a float
-
     if len(image.data.shape) > 2:
         stack = image.data
         processed_slices = []
