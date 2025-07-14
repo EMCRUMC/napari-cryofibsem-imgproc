@@ -8,7 +8,7 @@ from napari_plugin_engine import napari_hook_implementation
 
 def process_slice(slice_data, kernel):
     clean = cv2.medianBlur(slice_data, kernel)
-    return processed_slice_uint
+    return clean
 
 
 @magic_factory(
