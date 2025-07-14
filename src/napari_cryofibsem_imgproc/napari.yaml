@@ -18,6 +18,9 @@ contributions:
     - id: napari-cryofibsem-imgproc.make_denoise_widget
       python_name: napari_cryofibsem_imgproc:denoise
       title: Make denoise widget
+    - id: napari-cryofibsem-imgproc.make_medianblur_widget
+      python_name: napari_cryofibsem_imgproc:medianblur
+      title: Make median blur widget
     - id: napari-cryofibsem-imgproc.make_contrast_widget
       python_name: napari_cryofibsem_imgproc:contrast
       title: Make contrast widget
@@ -35,6 +38,8 @@ contributions:
       display_name: Decharging
     - command: napari-cryofibsem-imgproc.make_denoise_widget
       display_name: Denoising
+    - command: napari-cryofibsem-imgproc.make_medianblur_widget
+      display_name: Median Blur
     - command: napari-cryofibsem-imgproc.make_contrast_widget
       display_name: Enhancing Contrast
     - command: napari-cryofibsem-imgproc.make_brightness_widget
