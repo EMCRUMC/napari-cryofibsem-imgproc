@@ -6,6 +6,7 @@ from .contrast import contrast
 from .decharge import decharge
 from .decurtain import decurtain
 from .denoise import denoise
+from .medianblur import medianblur
 
 __all__ = (
     "make_sample_data",
@@ -18,4 +19,5 @@ __all__ = (
     "decharge",
     "decurtain",
     "denoise",
+    "medianblur"
 )
