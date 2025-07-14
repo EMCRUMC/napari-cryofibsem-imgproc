@@ -8,7 +8,7 @@ from napari_plugin_engine import napari_hook_implementation
 
 
 def process_slice(slice_data, iterations, tile_row, tile_col, clip_limit):
-    img_clahe = slide_data
+    img_clahe = slice_data
     
     for i in range(iterations):
         img_clahe = equalize_adapthist(img_clahe,
