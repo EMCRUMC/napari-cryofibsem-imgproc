@@ -7,11 +7,14 @@ from magicgui import magic_factory
 from napari_plugin_engine import napari_hook_implementation
 
 
-def process_slice(slice_data, tile_row, tile_col, clip_limit):
-    img_clahe = equalize_adapthist(slice_data,
-                                   kernel_size=(tile_row, tile_col),
-                                   clip_limit=clip_limit,
-                                   nbins=256)
+def process_slice(slice_data, iterations, tile_row, tile_col, clip_limit):
+    img_clahe = slice_data
+    
+    for i in range(iterations):
+        img_clahe = equalize_adapthist(img_clahe,
+                                       kernel_size=(tile_row, tile_col),
+                                       clip_limit=clip_limit,
+                                       nbins=256)
 
     # Converts and normalizes range to original 8 or 16 bit unsigned integers
     processed_slice_uint = None
@@ -28,12 +31,14 @@ def process_slice(slice_data, tile_row, tile_col, clip_limit):
 @magic_factory(
     call_button="Enhance contrast",
     image={"label": "Input Image"},
-    clip_limit={"label": "Clip Limit", "choices": ["0.005", "0.007", "0.008", "0.009", "0.01"]},
+    iterations={"label": "Iterations"},
+    clip_limit={"label": "Clip Limit", "choices": ["0.005", "0.007", "0.008", "0.009", "0.010", "0.011", "0.012", "0.013", "0.014", "0.015"]},
     tile_row={"label": "Number of Rows"},
     tile_col={"label": "Number of Columns"}
 )
 def contrast(
         image: Image,
+        iterations: int=1,
         clip_limit: str = "0.007",
         tile_row: int = 50,
         tile_col: int = 50
@@ -46,6 +51,9 @@ def contrast(
     ----------
     Image : "Image"
         Image to be processed
+
+    Iterations : int
+        Number of times the contrast enhancement will be executed
 
     Clip Limit : str
         Contrast limit for localized changes in the histogram
@@ -74,7 +82,7 @@ def contrast(
         slice_order = []  # To keep track of slice order
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            future_to_slice = {executor.submit(process_slice, stack[slice_idx], tile_row, tile_col, clip_limit_float):
+            future_to_slice = {executor.submit(process_slice, stack[slice_idx], iterations, tile_row, tile_col, clip_limit_float):
                                    slice_idx for slice_idx in range(stack.shape[0])}
             for future in concurrent.futures.as_completed(future_to_slice):
                 slice_idx = future_to_slice[future]
@@ -86,9 +94,9 @@ def contrast(
         processed_stack = np.stack(processed_slices)
 
     else:
-        processed_stack = process_slice(image.data, tile_row, tile_col, clip_limit_float)
+        processed_stack = process_slice(image.data, iterations, tile_row, tile_col, clip_limit_float)
 
-    image_name = f"CoEn_clip{clip_limit_float}_row{tile_row}_col{tile_col}"
+    image_name = f"CoEn_iter{iterations}_clip{clip_limit_float}_row{tile_row}_col{tile_col}"
 
     print(f"\nImage or Stack contrast enhanced successfully!\n{image_name} added to Layer List.")
 
